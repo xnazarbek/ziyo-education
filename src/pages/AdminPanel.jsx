@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, onSnapshot, doc, updateDoc, setDoc } from 'firebase/firestore';
-import { Award, Sun, Moon, Plus, Minus } from 'lucide-react';
+import { Award, Sun, Moon, Plus, Minus, Database } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-const GROUPS = ['Z14', 'Z15', 'Z16']; // Guruhlaringiz ro'yxati
+const INITIAL_GROUPS = ['Z11', 'Z13', 'Z14', 'Z15'];
+
+// Boshlang'ich o'quvchilar ro'yxati (Seed Data)
+const INITIAL_STUDENTS = [
+  { id: 'st1', name: 'Ali Valiyev', group: 'Z14', coins: 15, attendance: {} },
+  { id: 'st2', name: 'Sardor Rahimov', group: 'Z14', coins: 20, attendance: {} },
+  { id: 'st3', name: 'Madina Karimova', group: 'Z14', coins: 10, attendance: {} },
+  { id: 'st4', name: 'Javohir Toshmatov', group: 'Z11', coins: 25, attendance: {} },
+  { id: 'st5', name: 'Lola Ahmedova', group: 'Z11', coins: 18, attendance: {} },
+  { id: 'st6', name: 'Bekzod Qodirov', group: 'Z13', coins: 12, attendance: {} },
+];
 
 export default function AdminPanel() {
+  const [groups, setGroups] = useState(INITIAL_GROUPS);
   const [selectedGroup, setSelectedGroup] = useState('Z14');
   const [students, setStudents] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -14,24 +25,34 @@ export default function AdminPanel() {
   const [activeWeek, setActiveWeek] = useState(1);
   const [coinInputs, setCoinInputs] = useState({});
 
-  // 1. Firebase Firestore'dan o'quvchilarni real-vaqt rejimida olish
+  // Real-time Firebase'dan o'qish
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'students'), (snapshot) => {
-      const studentList = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
+      const studentList = snapshot.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
       }));
       setStudents(studentList);
     });
     return () => unsubscribe();
   }, []);
 
-  // Tanlangan guruh o'quvchilarini saralash
+  // Firebase'ga dastlabki ma'lumotlarni bir martalik yuklash (Seed)
+  const seedDatabase = async () => {
+    try {
+      for (const student of INITIAL_STUDENTS) {
+        await setDoc(doc(db, 'students', student.id), student);
+      }
+      alert("Ma'lumotlar Firebase'ga muvaffaqiyatli yuklandi!");
+    } catch (error) {
+      console.error("Xatolik:", error);
+    }
+  };
+
   const filteredStudents = students
     .filter((s) => s.group === selectedGroup)
     .sort((a, b) => (b.coins || 0) - (a.coins || 0));
 
-  // 2. Tangalarni Firebase'da yangilash
   const handleCoins = async (id, currentCoins, isAdd) => {
     const val = parseInt(coinInputs[id], 10);
     if (!isNaN(val) && val > 0) {
@@ -44,7 +65,6 @@ export default function AdminPanel() {
     }
   };
 
-  // 3. Yo'qlamani Firebase'da update qilish
   const handleAttendanceChange = async (studentId, day, status) => {
     const studentRef = doc(db, 'students', studentId);
     const weekKey = `week_${activeWeek}`;
@@ -54,7 +74,6 @@ export default function AdminPanel() {
     });
   };
 
-  // Yangi hafta qo'shish
   const addWeek = () => {
     const nextWeek = weeks.length + 1;
     setWeeks([...weeks, nextWeek]);
@@ -76,7 +95,7 @@ export default function AdminPanel() {
               Groups
             </h2>
             <nav className="space-y-2">
-              {GROUPS.map((group) => (
+              {groups.map((group) => (
                 <button
                   key={group}
                   onClick={() => setSelectedGroup(group)}
@@ -93,15 +112,26 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <button
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm border transition ${
-            isDarkMode ? 'border-slate-700 bg-slate-800 text-amber-400' : 'border-amber-300 bg-amber-100 text-slate-800'
-          }`}
-        >
-          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-          <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
-        </button>
+        <div className="space-y-2">
+          {/* Seed Button */}
+          <button
+            onClick={seedDatabase}
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-500 transition"
+          >
+            <Database size={16} />
+            <span>Bazani to'ldirish</span>
+          </button>
+
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm border transition ${
+              isDarkMode ? 'border-slate-700 bg-slate-800 text-amber-400' : 'border-amber-300 bg-amber-100 text-slate-800'
+            }`}
+          >
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -134,35 +164,10 @@ export default function AdminPanel() {
 
                   return (
                     <tr key={student.id} className="hover:bg-slate-800/30">
-                      {/* Rank Badges */}
                       <td className="py-4 px-6 font-medium flex items-center gap-3">
-                        {index === 0 && (
-                          <span className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 font-black text-xs flex items-center justify-center shadow-lg shadow-amber-500/30">
-                            🥇 1
-                          </span>
-                        )}
-                        {index === 1 && (
-                          <span className="w-7 h-7 rounded-lg bg-gradient-to-tr from-slate-400 to-slate-200 text-slate-950 font-black text-xs flex items-center justify-center shadow-lg shadow-slate-400/20">
-                            🥈 2
-                          </span>
-                        )}
-                        {index === 2 && (
-                          <span className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-700 to-amber-500 text-white font-black text-xs flex items-center justify-center shadow-lg shadow-amber-700/20">
-                            🥉 3
-                          </span>
-                        )}
-                        {index > 2 && (
-                          <span className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center border ${
-                            isDarkMode ? 'bg-slate-800/80 border-slate-700 text-slate-400' : 'bg-amber-100/60 border-amber-200 text-slate-600'
-                          }`}>
-                            {index + 1}
-                          </span>
-                        )}
-
                         <span className="font-semibold text-sm">{student.name}</span>
                       </td>
 
-                      {/* Attendance Select */}
                       {DAYS.map((day) => {
                         const status = currentAtt[day] || 'none';
                         return (
@@ -186,7 +191,6 @@ export default function AdminPanel() {
                         );
                       })}
 
-                      {/* Total Coins */}
                       <td className="py-4 px-6 text-right font-bold text-amber-500">
                         <div className="flex items-center justify-end gap-1">
                           <Award size={16} />
@@ -194,7 +198,6 @@ export default function AdminPanel() {
                         </div>
                       </td>
 
-                      {/* Manage Coins */}
                       <td className="py-4 px-6">
                         <div className="flex items-center justify-center gap-2">
                           <input
@@ -249,7 +252,6 @@ export default function AdminPanel() {
           <button
             onClick={addWeek}
             className="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition"
-            title="Add New Week"
           >
             <Plus size={16} />
           </button>
