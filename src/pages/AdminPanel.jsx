@@ -4,16 +4,103 @@ import { collection, onSnapshot, doc, updateDoc, setDoc } from 'firebase/firesto
 import { Award, Sun, Moon, Plus, Minus, Database } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-const INITIAL_GROUPS = ['Z11', 'Z13', 'Z14', 'Z15'];
+const INITIAL_GROUPS = ['Z14', 'Z13', 'Z11'];
 
-// Boshlang'ich o'quvchilar ro'yxati (Seed Data)
+// Barcha guruhlar va o'quvchilar ro'yxati
 const INITIAL_STUDENTS = [
-  { id: 'st1', name: 'Ali Valiyev', group: 'Z14', coins: 15, attendance: {} },
-  { id: 'st2', name: 'Sardor Rahimov', group: 'Z14', coins: 20, attendance: {} },
-  { id: 'st3', name: 'Madina Karimova', group: 'Z14', coins: 10, attendance: {} },
-  { id: 'st4', name: 'Javohir Toshmatov', group: 'Z11', coins: 25, attendance: {} },
-  { id: 'st5', name: 'Lola Ahmedova', group: 'Z11', coins: 18, attendance: {} },
-  { id: 'st6', name: 'Bekzod Qodirov', group: 'Z13', coins: 12, attendance: {} },
+  // --- Group Z14 ---
+  { id: 'z14_1', name: 'Mirzajonov Firdavs', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_2', name: 'Jabborova Zarina', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_3', name: 'Shaxobiddinova Laziza', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_4', name: 'Ochilova Hurshida', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_5', name: 'Akromov Elyor', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_6', name: 'Raimjonov Umidjon', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_7', name: 'Shomirzayev Xusrav', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_8', name: 'Kutfiddinova Malika', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_9', name: 'Raimjonov Dilyorbek', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_10', name: 'Baxtiyorov Boymirza', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_11', name: 'Abdurashidov Ma’ruf', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_12', name: 'Berdiyorova Muborak', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_13', name: 'Jumaboyeva Sarvinoz', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_14', name: 'Isoqulova Aziza', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_15', name: 'Xudoyberdiyeva Aziza', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_16', name: 'Yo\'ldashaliyev Jahongir', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_17', name: 'Safarova Mohinur', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_18', name: 'Ablazizov Shaxriyor', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_19', name: 'Nazarqulova Gulsanam', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_20', name: 'Qudratova Mohinur', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_21', name: 'Amirova Dilshoda', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_22', name: 'Raxmatullayev Husan', group: 'Z14', coins: 0, attendance: {} },
+
+  // --- Group Z13 ---
+  { id: 'z13_1', name: 'Mahmudova Mohinur', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_2', name: 'Alisherov Bilol', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_3', name: 'Mamasaliyeva Zarina', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_4', name: 'Alimqulov Ehrombek', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_5', name: 'Xusanova Munavvar', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_6', name: 'Mo\'minova Marjona', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_7', name: 'O\'rinboyev Muhammadyusuf', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_8', name: 'Olimova Dilbar', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_9', name: 'Abduvohidova Jasmina', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_10', name: 'Xasanboyeva E\'zoza', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_11', name: 'Abduazimov Abdulaziz', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_12', name: 'Shayzoqov Sahobiddin', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_13', name: 'Rustamova Zulfizar', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_14', name: 'Eliboyev Umidjon', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_15', name: 'Qo\'chqorov Abubakr', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_16', name: 'Alijonova Lobar', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_17', name: 'Rahmatullayeva Zahro', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_18', name: 'Niyozova Muxlisa', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_19', name: 'Tursunova Zahro', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_20', name: 'Azimov Umidjon', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_21', name: 'Nosirqulov Burxonali', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_22', name: 'Mahmudova Charos', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_23', name: 'Holbo’tayeva Fotima', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_24', name: 'Holbo’tayeva Zuhra', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_25', name: 'Berdiqulov Asilbek', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_26', name: 'Mamaraimova Ra\'no', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_27', name: 'Xayrullayev Jamoliddin', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_28', name: 'Obidova Gulasal', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_29', name: 'Norbekova Dilnura', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_30', name: 'Bo’ronboyev Davlat', group: 'Z13', coins: 0, attendance: {} },
+  { id: 'z13_31', name: 'Aliyeva Sabrina', group: 'Z13', coins: 0, attendance: {} },
+
+  // --- Group Z11 ---
+  { id: 'z11_1', name: 'Abdurahimova Sarvinoz', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_2', name: 'Yagafarov Rashid', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_3', name: 'Abduhoshimov Kamron', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_4', name: 'Kuliyeva Mashhura', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_5', name: 'Tolibjonova Diyora', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_6', name: 'Allayorova Mushtariybonu', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_7', name: 'Abdusodiqov Sanjar', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_8', name: 'Samadova Nigora', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_9', name: 'Akromjonov Inomjon', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_10', name: 'Abduqahharov Firdavs', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_11', name: 'Umarov Eldor', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_12', name: 'Turobjonova Pokiza', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_13', name: 'Rahmatullayev Abdulloh', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_14', name: 'Nazarqulov Muhammadjon', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_15', name: 'Haydarqulova Madina', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_16', name: 'Dilovarxonova Nigora', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_17', name: 'Soatov Ozodbek', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_18', name: 'Isoqjonov Sardor', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_19', name: 'Isoqjonov Ibroxim', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_20', name: 'Irisqulov Abror', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_21', name: 'Jo\'rayeva Munisa', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_22', name: 'Temirova Mushtariybonu', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_23', name: 'Toshpo\'latova Fazilat', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_24', name: 'Abdug\'ofurrov Asilbek', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_25', name: 'Nazarqulova Shahzoda', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_26', name: 'Norboyeva Parizoda', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_27', name: 'Abdunabiyeva Sabina', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_28', name: 'Ulug\'bekova Sarvinoz', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_29', name: 'Xudoyberdiyev Nazarbek', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_30', name: 'Boytemirova Zulfiya', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_31', name: 'Farhodova Shaxlo', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_32', name: 'Xasanov Bexruz', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_33', name: 'Xasanov Begzod', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_34', name: 'Qurbonboyeva Oydin', group: 'Z11', coins: 0, attendance: {} },
+  { id: 'z11_35', name: 'Berdimurodava Shahzoda', group: 'Z11', coins: 0, attendance: {} },
 ];
 
 export default function AdminPanel() {
@@ -25,7 +112,6 @@ export default function AdminPanel() {
   const [activeWeek, setActiveWeek] = useState(1);
   const [coinInputs, setCoinInputs] = useState({});
 
-  // Real-time Firebase'dan o'qish
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'students'), (snapshot) => {
       const studentList = snapshot.docs.map((d) => ({
@@ -37,13 +123,12 @@ export default function AdminPanel() {
     return () => unsubscribe();
   }, []);
 
-  // Firebase'ga dastlabki ma'lumotlarni bir martalik yuklash (Seed)
   const seedDatabase = async () => {
     try {
       for (const student of INITIAL_STUDENTS) {
-        await setDoc(doc(db, 'students', student.id), student);
+        await setDoc(doc(db, 'students', student.id), student, { merge: true });
       }
-      alert("Ma'lumotlar Firebase'ga muvaffaqiyatli yuklandi!");
+      alert("Barcha guruh va o'quvchilar Firebase'ga yuklandi!");
     } catch (error) {
       console.error("Xatolik:", error);
     }
@@ -82,7 +167,6 @@ export default function AdminPanel() {
 
   return (
     <div className={`flex h-screen font-sans ${isDarkMode ? 'bg-slate-950 text-slate-100' : 'bg-amber-50/50 text-slate-900'}`}>
-      {/* Sidebar */}
       <aside className={`w-64 border-r p-6 flex flex-col justify-between ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-amber-200'}`}>
         <div className="space-y-6">
           <div className="flex items-center gap-3">
@@ -113,7 +197,6 @@ export default function AdminPanel() {
         </div>
 
         <div className="space-y-2">
-          {/* Seed Button */}
           <button
             onClick={seedDatabase}
             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl font-bold text-xs bg-emerald-600 text-white hover:bg-emerald-500 transition"
@@ -134,7 +217,6 @@ export default function AdminPanel() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto p-8 flex flex-col justify-between">
         <div>
           <header className="flex justify-between items-center mb-6">
@@ -144,7 +226,6 @@ export default function AdminPanel() {
             </div>
           </header>
 
-          {/* Table */}
           <div className={`border rounded-2xl overflow-hidden shadow-xl ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-amber-200'}`}>
             <table className="w-full text-left border-collapse">
               <thead>
@@ -233,7 +314,6 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        {/* Bottom Weekly Tabs */}
         <div className="mt-6 flex items-center gap-2 border-t border-slate-800 pt-4">
           <span className="text-xs font-bold text-slate-400 uppercase mr-2">Weeks:</span>
           {weeks.map((w) => (
