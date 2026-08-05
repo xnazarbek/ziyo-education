@@ -4,7 +4,7 @@ import { collection, onSnapshot, doc, updateDoc, setDoc } from 'firebase/firesto
 import { Award, Sun, Moon, Plus, Minus, Database } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-const INITIAL_GROUPS = ['Z14', 'Z13', 'Z11'];
+const INITIAL_GROUPS = ['Z13', 'Z11', 'Z14'];
 
 // Barcha guruhlar va o'quvchilar ro'yxati
 const INITIAL_STUDENTS = [
