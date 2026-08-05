@@ -1,30 +1,64 @@
-import React, { useState } from 'react';
-import { useAppStore } from '../store/appStore';
-import { Award, Users, Sun, Moon, Plus, Minus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { db } from '../firebase';
+import { collection, onSnapshot, doc, updateDoc, setDoc } from 'firebase/firestore';
+import { Award, Sun, Moon, Plus, Minus } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+const GROUPS = ['Z14', 'Z15', 'Z16']; // Guruhlaringiz ro'yxati
 
 export default function AdminPanel() {
-  const {
-    groups, selectedGroup, setSelectedGroup,
-    students, setAttendance, updateCoins,
-    isDarkMode, toggleTheme,
-    weeks, activeWeek, setActiveWeek, addWeek
-  } = useAppStore();
-
+  const [selectedGroup, setSelectedGroup] = useState('Z14');
+  const [students, setStudents] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [weeks, setWeeks] = useState([1]);
+  const [activeWeek, setActiveWeek] = useState(1);
   const [coinInputs, setCoinInputs] = useState({});
 
+  // 1. Firebase Firestore'dan o'quvchilarni real-vaqt rejimida olish
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'students'), (snapshot) => {
+      const studentList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setStudents(studentList);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Tanlangan guruh o'quvchilarini saralash
   const filteredStudents = students
     .filter((s) => s.group === selectedGroup)
-    .sort((a, b) => b.coins - a.coins);
+    .sort((a, b) => (b.coins || 0) - (a.coins || 0));
 
-  const handleCoins = (id, isAdd) => {
+  // 2. Tangalarni Firebase'da yangilash
+  const handleCoins = async (id, currentCoins, isAdd) => {
     const val = parseInt(coinInputs[id], 10);
     if (!isNaN(val) && val > 0) {
-      const limitedVal = Math.min(5, val); // Max 5 limit
-      updateCoins(id, isAdd ? limitedVal : -limitedVal);
+      const limitedVal = Math.min(5, val);
+      const studentRef = doc(db, 'students', id);
+      const newCoins = Math.max(0, (currentCoins || 0) + (isAdd ? limitedVal : -limitedVal));
+
+      await updateDoc(studentRef, { coins: newCoins });
       setCoinInputs({ ...coinInputs, [id]: '' });
     }
+  };
+
+  // 3. Yo'qlamani Firebase'da update qilish
+  const handleAttendanceChange = async (studentId, day, status) => {
+    const studentRef = doc(db, 'students', studentId);
+    const weekKey = `week_${activeWeek}`;
+
+    await updateDoc(studentRef, {
+      [`attendance.${weekKey}.${day}`]: status,
+    });
+  };
+
+  // Yangi hafta qo'shish
+  const addWeek = () => {
+    const nextWeek = weeks.length + 1;
+    setWeeks([...weeks, nextWeek]);
+    setActiveWeek(nextWeek);
   };
 
   return (
@@ -42,14 +76,15 @@ export default function AdminPanel() {
               Groups
             </h2>
             <nav className="space-y-2">
-              {groups.map((group) => (
+              {GROUPS.map((group) => (
                 <button
                   key={group}
                   onClick={() => setSelectedGroup(group)}
-                  className={`w-full text-left px-4 py-3 rounded-xl font-semibold text-sm transition ${selectedGroup === group
+                  className={`w-full text-left px-4 py-3 rounded-xl font-semibold text-sm transition ${
+                    selectedGroup === group
                       ? 'bg-indigo-600 text-white'
                       : isDarkMode ? 'text-slate-400 hover:bg-slate-800' : 'text-slate-600 hover:bg-amber-100'
-                    }`}
+                  }`}
                 >
                   Group {group}
                 </button>
@@ -59,9 +94,10 @@ export default function AdminPanel() {
         </div>
 
         <button
-          onClick={toggleTheme}
-          className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm border transition ${isDarkMode ? 'border-slate-700 bg-slate-800 text-amber-400' : 'border-amber-300 bg-amber-100 text-slate-800'
-            }`}
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-bold text-sm border transition ${
+            isDarkMode ? 'border-slate-700 bg-slate-800 text-amber-400' : 'border-amber-300 bg-amber-100 text-slate-800'
+          }`}
         >
           {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
@@ -94,11 +130,11 @@ export default function AdminPanel() {
               <tbody className={`divide-y ${isDarkMode ? 'divide-slate-800' : 'divide-amber-100'}`}>
                 {filteredStudents.map((student, index) => {
                   const weekKey = `week_${activeWeek}`;
-                  const currentAtt = student.attendance[weekKey] || {};
+                  const currentAtt = (student.attendance && student.attendance[weekKey]) || {};
 
                   return (
                     <tr key={student.id} className="hover:bg-slate-800/30">
-                      {/* Student Name with Modern Rank Badges */}
+                      {/* Rank Badges */}
                       <td className="py-4 px-6 font-medium flex items-center gap-3">
                         {index === 0 && (
                           <span className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 font-black text-xs flex items-center justify-center shadow-lg shadow-amber-500/30">
@@ -116,10 +152,9 @@ export default function AdminPanel() {
                           </span>
                         )}
                         {index > 2 && (
-                          <span className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center border ${isDarkMode
-                              ? 'bg-slate-800/80 border-slate-700 text-slate-400'
-                              : 'bg-amber-100/60 border-amber-200 text-slate-600'
-                            }`}>
+                          <span className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center border ${
+                            isDarkMode ? 'bg-slate-800/80 border-slate-700 text-slate-400' : 'bg-amber-100/60 border-amber-200 text-slate-600'
+                          }`}>
                             {index + 1}
                           </span>
                         )}
@@ -127,18 +162,20 @@ export default function AdminPanel() {
                         <span className="font-semibold text-sm">{student.name}</span>
                       </td>
 
+                      {/* Attendance Select */}
                       {DAYS.map((day) => {
                         const status = currentAtt[day] || 'none';
                         return (
                           <td key={day} className="py-4 px-2 text-center">
                             <select
                               value={status}
-                              onChange={(e) => setAttendance(student.id, day, e.target.value)}
-                              className={`w-10 h-10 rounded-xl font-bold text-xs outline-none cursor-pointer text-center appearance-none border transition ${status === 'present' ? 'bg-emerald-500 text-white border-emerald-600' :
-                                  status === 'absent' ? 'bg-rose-500 text-white border-rose-600' :
-                                    status === 'excused' ? 'bg-amber-500 text-white border-amber-600' :
-                                      isDarkMode ? 'bg-slate-800 text-slate-500 border-slate-700' : 'bg-slate-100 text-slate-400 border-slate-300'
-                                }`}
+                              onChange={(e) => handleAttendanceChange(student.id, day, e.target.value)}
+                              className={`w-10 h-10 rounded-xl font-bold text-xs outline-none cursor-pointer text-center appearance-none border transition ${
+                                status === 'present' ? 'bg-emerald-500 text-white border-emerald-600' :
+                                status === 'absent' ? 'bg-rose-500 text-white border-rose-600' :
+                                status === 'excused' ? 'bg-amber-500 text-white border-amber-600' :
+                                isDarkMode ? 'bg-slate-800 text-slate-500 border-slate-700' : 'bg-slate-100 text-slate-400 border-slate-300'
+                              }`}
                             >
                               <option value="none" className="bg-slate-900 text-white">-</option>
                               <option value="present" className="bg-emerald-600 text-white">P</option>
@@ -149,13 +186,15 @@ export default function AdminPanel() {
                         );
                       })}
 
+                      {/* Total Coins */}
                       <td className="py-4 px-6 text-right font-bold text-amber-500">
                         <div className="flex items-center justify-end gap-1">
                           <Award size={16} />
-                          <span>{student.coins}</span>
+                          <span>{student.coins || 0}</span>
                         </div>
                       </td>
 
+                      {/* Manage Coins */}
                       <td className="py-4 px-6">
                         <div className="flex items-center justify-center gap-2">
                           <input
@@ -165,17 +204,18 @@ export default function AdminPanel() {
                             placeholder="1-5"
                             value={coinInputs[student.id] || ''}
                             onChange={(e) => setCoinInputs({ ...coinInputs, [student.id]: e.target.value })}
-                            className={`w-16 px-2 py-1.5 rounded-xl text-xs font-semibold outline-none border text-center ${isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-amber-50 border-amber-300 text-slate-900'
-                              }`}
+                            className={`w-16 px-2 py-1.5 rounded-xl text-xs font-semibold outline-none border text-center ${
+                              isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-amber-50 border-amber-300 text-slate-900'
+                            }`}
                           />
                           <button
-                            onClick={() => handleCoins(student.id, true)}
+                            onClick={() => handleCoins(student.id, student.coins, true)}
                             className="p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition"
                           >
                             <Plus size={14} />
                           </button>
                           <button
-                            onClick={() => handleCoins(student.id, false)}
+                            onClick={() => handleCoins(student.id, student.coins, false)}
                             className="p-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg transition"
                           >
                             <Minus size={14} />
@@ -197,10 +237,11 @@ export default function AdminPanel() {
             <button
               key={w}
               onClick={() => setActiveWeek(w)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${activeWeek === w
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                activeWeek === w
                   ? 'bg-indigo-600 text-white'
                   : isDarkMode ? 'bg-slate-800 text-slate-400 hover:bg-slate-700' : 'bg-amber-100 text-slate-700 hover:bg-amber-200'
-                }`}
+              }`}
             >
               Week {w}
             </button>
