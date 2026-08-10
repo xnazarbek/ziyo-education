@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { Award, User, Lock, CheckCircle2, XCircle, AlertCircle, LogOut } from 'lucide-react';
+import { Award, User, Lock, AlertCircle, LogOut } from 'lucide-react';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
@@ -30,7 +30,7 @@ export default function StudentPortal() {
         const studentData = querySnapshot.docs[0].data();
         setStudent({ id: querySnapshot.docs[0].id, ...studentData });
       } else {
-        setError("Login yoki parol xato! Iltimos, qaytadan urinib ko'ring.");
+        setError("Login yoki parol xato! Ismingiz va familiyangizni bo'shliqsiz kiriting (Parol: ziyoz14).");
       }
     } catch (err) {
       console.error(err);
@@ -46,7 +46,7 @@ export default function StudentPortal() {
       <div className="flex items-center justify-center min-h-screen bg-slate-950 text-slate-100 font-sans p-4">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-3xl font-black mb-4 shadow-lg shadow-indigo-600/30">
+            <div className="w-16 h-16 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-3xl font-black mb-4 shadow-lg shadow-indigo-600/30 text-white">
               Z
             </div>
             <h1 className="text-2xl font-bold">Ziyo Education</h1>
@@ -63,14 +63,14 @@ export default function StudentPortal() {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                Login (F/I/O yoki maxsus ID)
+                Login (Ism va familiya, bo'shliqsiz)
               </label>
               <div className="relative">
                 <User size={18} className="absolute left-4 top-3.5 text-slate-500" />
                 <input
                   type="text"
                   required
-                  placeholder="Masalan: firdavs"
+                  placeholder="Masalan: abdurahimovasarvinoz"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-sm text-white outline-none focus:border-indigo-500 transition"
@@ -87,7 +87,7 @@ export default function StudentPortal() {
                 <input
                   type="password"
                   required
-                  placeholder="••••"
+                  placeholder="ziyoz14"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-sm text-white outline-none focus:border-indigo-500 transition"
@@ -119,7 +119,7 @@ export default function StudentPortal() {
         </div>
         <button
           onClick={() => setStudent(null)}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 border border-slate-700 rounded-xl text-xs font-bold transition"
+          className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 border border-slate-700 rounded-xl text-xs font-bold transition text-slate-300"
         >
           <LogOut size={16} />
           <span>Chiqish</span>
