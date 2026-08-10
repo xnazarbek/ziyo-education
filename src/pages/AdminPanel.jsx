@@ -6,44 +6,44 @@ import { Award, Sun, Moon, Plus, Minus, Database } from 'lucide-react';
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const INITIAL_GROUPS = ['Z14'];
 
-// Yangi taqdim etilgan Z14 guruhi o'quvchilari ro'yxati
+// Barcha o'quvchilar uchun login ismi, parol esa 'ziyoz14' qilib belgilandi
 const INITIAL_STUDENTS = [
-  { id: 'z14_1', name: 'Abdurahimova Sarvinoz', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_2', name: 'Yagafarov Rashid', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_3', name: 'Abduhoshimov Kamron', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_4', name: 'Kuliyeva Mashhura', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_5', name: 'Tolibjonova Diyora', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_6', name: 'Allayorova Mushtariybonu', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_7', name: 'Abdusodiqov Sanjar', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_8', name: 'Samadova Nigora', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_9', name: 'Akromjonov Inomjon', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_10', name: 'Abduqahharov Firdavs', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_11', name: 'Umarov Eldor', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_12', name: 'Turobjonova Pokiza', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_13', name: 'Rahmatullayev Abdulloh', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_14', name: 'Nazarqulov Muhammadjon', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_15', name: 'Haydarqulova Madina', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_16', name: 'Dilovarxonova Nigora', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_17', name: 'Soatov Ozodbek', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_18', name: 'Isoqjonov Sardor', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_19', name: 'Isoqjonov Ibroxim', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_20', name: 'Irisqulov Abror', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_21', name: 'Jo\'rayeva Munisa', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_22', name: 'Temirova Mushtariybonu', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_23', name: 'Toshpo\'latova Fazilat', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_24', name: 'Abdug\'ofurrov Asilbek', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_25', name: 'Nazarqulova Shahzoda', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_26', name: 'Norboyeva Parizoda', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_27', name: 'Abdunabiyeva Sabina', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_28', name: 'Ulug\'bekova Sarvinoz', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_29', name: 'Xudoyberdiyev Nazarbek', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_30', name: 'Boytemirova Zulfiya', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_31', name: 'Farhodova Shaxlo', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_32', name: 'Xasanov Bexruz', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_33', name: 'Xasanov Begzod', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_34', name: 'Qurbonboyeva Oydin', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_35', name: 'Berdimurodava Shahzoda', group: 'Z14', coins: 0, attendance: {} },
-  { id: 'z14_36', name: 'Erbo\'tayev Shohruh', group: 'Z14', coins: 0, attendance: {} },
+  { id: 'z14_1', name: 'Abdurahimova Sarvinoz', group: 'Z14', username: 'abdurahimovasarvinoz', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_2', name: 'Yagafarov Rashid', group: 'Z14', username: 'yagafarovrashid', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_3', name: 'Abduhoshimov Kamron', group: 'Z14', username: 'abduhoshimovkamron', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_4', name: 'Kuliyeva Mashhura', group: 'Z14', username: 'kulievamashhura', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_5', name: 'Tolibjonova Diyora', group: 'Z14', username: 'tolibjonovadiyora', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_6', name: 'Allayorova Mushtariybonu', group: 'Z14', username: 'allayorovamushtariybonu', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_7', name: 'Abdusodiqov Sanjar', group: 'Z14', username: 'abdusodiqovsanjar', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_8', name: 'Samadova Nigora', group: 'Z14', username: 'samadovanigora', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_9', name: 'Akromjonov Inomjon', group: 'Z14', username: 'akromjonovinomjon', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_10', name: 'Abduqahharov Firdavs', group: 'Z14', username: 'abduqahharovfirdavs', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_11', name: 'Umarov Eldor', group: 'Z14', username: 'umaroveldor', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_12', name: 'Turobjonova Pokiza', group: 'Z14', username: 'turobjonovapokiza', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_13', name: 'Rahmatullayev Abdulloh', group: 'Z14', username: 'rahmatullayevabdulloh', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_14', name: 'Nazarqulov Muhammadjon', group: 'Z14', username: 'nazarqulovmuhammadjon', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_15', name: 'Haydarqulova Madina', group: 'Z14', username: 'haydarqulovamadina', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_16', name: 'Dilovarxonova Nigora', group: 'Z14', username: 'dilovarxonovanigora', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_17', name: 'Soatov Ozodbek', group: 'Z14', username: 'soatovozodbek', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_18', name: 'Isoqjonov Sardor', group: 'Z14', username: 'isoqjonovsardor', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_19', name: 'Isoqjonov Ibroxim', group: 'Z14', username: 'isoqjonovibroxim', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_20', name: 'Irisqulov Abror', group: 'Z14', username: 'irisqulovabror', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_21', name: 'Jo\'rayeva Munisa', group: 'Z14', username: 'jorayevamunisa', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_22', name: 'Temirova Mushtariybonu', group: 'Z14', username: 'temirovamushtariybonu', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_23', name: 'Toshpo\'latova Fazilat', group: 'Z14', username: 'toshpolatovafazilat', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_24', name: 'Abdug\'ofurrov Asilbek', group: 'Z14', username: 'abdugofurrovasilbek', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_25', name: 'Nazarqulova Shahzoda', group: 'Z14', username: 'nazarqulovashahzoda', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_26', name: 'Norboyeva Parizoda', group: 'Z14', username: 'norboyevaparizoda', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_27', name: 'Abdunabiyeva Sabina', group: 'Z14', username: 'abdunabiyevasabina', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_28', name: 'Ulug\'bekova Sarvinoz', group: 'Z14', username: 'ulugbekovasrvinoz', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_29', name: 'Xudoyberdiyev Nazarbek', group: 'Z14', username: 'xudoyberdiyevnazarbek', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_30', name: 'Boytemirova Zulfiya', group: 'Z14', username: 'boytemirovazulfiya', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_31', name: 'Farhodova Shaxlo', group: 'Z14', username: 'farhodovashaxlo', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_32', name: 'Xasanov Bexruz', group: 'Z14', username: 'xasanovbexruz', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_33', name: 'Xasanov Begzod', group: 'Z14', username: 'xasanovbegzod', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_34', name: 'Qurbonboyeva Oydin', group: 'Z14', username: 'qurbonboyevaoydin', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_35', name: 'Berdimurodava Shahzoda', group: 'Z14', username: 'berdimurodavashahzoda', password: 'ziyoz14', coins: 0, attendance: {} },
+  { id: 'z14_36', name: 'Erbo\'tayev Shohruh', group: 'Z14', username: 'erbotayevshohruh', password: 'ziyoz14', coins: 0, attendance: {} },
 ];
 
 export default function AdminPanel() {
@@ -71,7 +71,7 @@ export default function AdminPanel() {
       for (const student of INITIAL_STUDENTS) {
         await setDoc(doc(db, 'students', student.id), student, { merge: true });
       }
-      alert("Yangi Z14 o'quvchilari Firebase'ga muvaffaqiyatli yuklandi!");
+      alert("O'quvchilar va ularning login/parollari Firebase'ga muvaffaqiyatli yuklandi!");
     } catch (error) {
       console.error("Xatolik:", error);
     }

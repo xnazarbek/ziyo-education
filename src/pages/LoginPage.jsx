@@ -10,8 +10,11 @@ export default function LoginPage({ setIsAuthenticated }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // O'qituvchi uchun maxfiy login va parol
-    if (username === 'admin' && password === 'ziyo2026') {
+    // .env faylidan olingan xavfsiz login va parol
+    const adminUsername = process.env.REACT_APP_ADMIN_USERNAME;
+    const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD;
+
+    if (username === adminUsername && password === adminPassword) {
       setIsAuthenticated(true);
       localStorage.setItem('isAuth', 'true');
       navigate('/admin');
