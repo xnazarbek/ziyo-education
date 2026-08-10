@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AdminPanel from './pages/AdminPanel';
+import StudentPortal from './pages/StudentPortal';
 import { Lock, User } from 'lucide-react';
 
 export default function App() {
@@ -13,7 +14,6 @@ export default function App() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // O'qituvchi login va paroli
     if (username === 'teacher' && password === 'teacherz14') {
       setIsAuthenticated(true);
       localStorage.setItem('isAuth', 'true');
@@ -25,6 +25,10 @@ export default function App() {
   return (
     <Router>
       <Routes>
+        {/* O'quvchilar uchun shaxsiy kabinet sahifasi */}
+        <Route path="/student" element={<StudentPortal />} />
+
+        {/* O'qituvchi uchun admin paneli */}
         <Route
           path="/admin"
           element={
@@ -81,7 +85,9 @@ export default function App() {
             )
           }
         />
-        <Route path="*" element={<Navigate to="/admin" />} />
+
+        {/* Asosiy saytga kirganda o'quvchilar portaliga yo'naltirish */}
+        <Route path="*" element={<Navigate to="/student" />} />
       </Routes>
     </Router>
   );
